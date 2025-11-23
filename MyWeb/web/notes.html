@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习笔记 - 学海航行</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .page-header {
+            background: linear-gradient(rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .note-card {
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .note-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .note-card.math {
+            border-left-color: #e74c3c;
+        }
+        
+        .note-card.english {
+            border-left-color: #3498db;
+        }
+        
+        .note-card.programming {
+            border-left-color: #2ecc71;
+        }
+        
+        .note-card.physics {
+            border-left-color: #f39c12;
+        }
+        
+        .note-card.other {
+            border-left-color: #9b59b6;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .search-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .category-badge {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-graduation-cap me-2"></i>学海航行
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tasks.html">学习任务</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="progress.html">进度图表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="notes.html">学习笔记</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reflections.html">学习感悟</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold">学习笔记</h1>
+                    <p class="lead mb-0">记录重要知识点，构建个人知识体系</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addNoteModal">
+                        <i class="fas fa-plus me-2"></i>添加新笔记
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 搜索和筛选 -->
+    <section class="container mb-4">
+        <div class="search-box">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="searchNotes" placeholder="搜索笔记...">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group float-end">
+                        <button type="button" class="btn btn-outline-primary active" data-category="all">全部</button>
+                        <button type="button" class="btn btn-outline-primary" data-category="math">数学</button>
+                        <button type="button" class="btn btn-outline-primary" data-category="english">英语</button>
+                        <button type="button" class="btn btn-outline-primary" data-category="programming">编程</button>
+                        <button type="button" class="btn btn-outline-primary" data-category="other">其他</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 笔记列表 -->
+    <section class="container mb-5">
+        <div class="row" id="notesContainer">
+            <!-- 笔记将通过JavaScript动态添加 -->
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="fas fa-sticky-note"></i>
+                    <h5>暂无学习笔记</h5>
+                    <p>点击上方按钮添加你的第一个学习笔记</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 添加笔记模态框 -->
+    <div class="modal fade" id="addNoteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加新笔记</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="noteForm">
+                        <div class="mb-3">
+                            <label for="noteTitle" class="form-label">笔记标题</label>
+                            <input type="text" class="form-control" id="noteTitle" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="noteCategory" class="form-label">分类</label>
+                                <select class="form-select" id="noteCategory" required>
+                                    <option value="">请选择分类</option>
+                                    <option value="math">数学</option>
+                                    <option value="english">英语</option>
+                                    <option value="programming">编程</option>
+                                    <option value="physics">物理</option>
+                                    <option value="chemistry">化学</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="noteTags" class="form-label">标签 (用逗号分隔)</label>
+                                <input type="text" class="form-control" id="noteTags" placeholder="例如: 公式,定理,例题">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="noteContent" class="form-label">笔记内容</label>
+                            <textarea class="form-control" id="noteContent" rows="10" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveNoteBtn">保存笔记</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看笔记模态框 -->
+    <div class="modal fade" id="viewNoteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewNoteTitle">笔记详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <span class="badge bg-primary category-badge" id="viewNoteCategory">分类</span>
+                        <span class="badge bg-secondary category-badge" id="viewNoteDate">日期</span>
+                    </div>
+                    <div id="viewNoteTags" class="mb-3"></div>
+                    <div id="viewNoteContent" class="border p-3 bg-light rounded"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="editNoteBtn">编辑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>学海航行</h5>
+                    <p>一个帮助你跟踪学习进度、记录学习点滴的平台。</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="../index.html" class="text-light">首页</a></li>
+                        <li><a href="tasks.html" class="text-light">学习任务</a></li>
+                        <li><a href="progress.html" class="text-light">进度图表</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>其他页面</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="notes.html" class="text-light">学习笔记</a></li>
+                        <li><a href="reflections.html" class="text-light">学习感悟</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 学海航行 - 所有权利保留</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 笔记数据模型
+        let notes = JSON.parse(localStorage.getItem('learningNotes')) || [];
+        
+        // DOM元素
+        const notesContainer = document.getElementById('notesContainer');
+        const noteForm = document.getElementById('noteForm');
+        const saveNoteBtn = document.getElementById('saveNoteBtn');
+        const searchNotesInput = document.getElementById('searchNotes');
+        let currentEditingNoteId = null;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示笔记
+            renderNotes();
+            
+            // 保存笔记事件
+            saveNoteBtn.addEventListener('click', addNote);
+            
+            // 搜索笔记事件
+            searchNotesInput.addEventListener('input', function() {
+                renderNotes(this.value);
+            });
+            
+            // 分类筛选事件
+            document.querySelectorAll('[data-category]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    document.querySelectorAll('[data-category]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    renderNotes(searchNotesInput.value, category);
+                });
+            });
+            
+            // 编辑笔记按钮事件
+            document.getElementById('editNoteBtn').addEventListener('click', function() {
+                const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewNoteModal'));
+                viewModal.hide();
+                
+                if (currentEditingNoteId !== null) {
+                    editNote(currentEditingNoteId);
+                }
+            });
+        });
+        
+        // 渲染笔记列表
+        function renderNotes(searchTerm = '', category = 'all') {
+            notesContainer.innerHTML = '';
+            
+            let filteredNotes = notes;
+            
+            // 搜索筛选
+            if (searchTerm) {
+                filteredNotes = filteredNotes.filter(note => 
+                    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }
+            
+            // 分类筛选
+            if (category !== 'all') {
+                filteredNotes = filteredNotes.filter(note => note.category === category);
+            }
+            
+            if (filteredNotes.length === 0) {
+                notesContainer.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="fas fa-sticky-note"></i>
+                            <h5>暂无学习笔记</h5>
+                            <p>${searchTerm || category !== 'all' ? '尝试调整搜索条件' : '点击上方按钮添加你的第一个学习笔记'}</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按日期降序排列
+            const sortedNotes = [...filteredNotes].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedNotes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'col-md-6 col-lg-4 mb-4';
+                
+                // 截取内容预览
+                const contentPreview = note.content.length > 100 ? 
+                    note.content.substring(0, 100) + '...' : note.content;
+                
+                // 标签显示
+                const tagsHtml = note.tags.map(tag => 
+                    `<span class="badge bg-light text-dark me-1">${tag}</span>`
+                ).join('');
+                
+                noteElement.innerHTML = `
+                    <div class="card note-card h-100 ${note.category}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">${note.title}</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="viewNote(${note.id})"><i class="fas fa-eye me-2"></i>查看</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editNote(${note.id})"><i class="fas fa-edit me-2"></i>编辑</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteNote(${note.id})"><i class="fas fa-trash me-2"></i>删除</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge ${getCategoryBadgeClass(note.category)} category-badge">${getCategoryName(note.category)}</span>
+                            </div>
+                            <p class="card-text">${contentPreview}</p>
+                            <div class="mb-2">${tagsHtml}</div>
+                            <small class="text-muted">${new Date(note.date).toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                `;
+                
+                notesContainer.appendChild(noteElement);
+            });
+        }
+        
+        // 获取分类名称
+        function getCategoryName(category) {
+            const categoryNames = {
+                'math': '数学',
+                'english': '英语',
+                'programming': '编程',
+                'physics': '物理',
+                'chemistry': '化学',
+                'other': '其他'
+            };
+            return categoryNames[category] || '其他';
+        }
+        
+        // 获取分类徽章类名
+        function getCategoryBadgeClass(category) {
+            const categoryClasses = {
+                'math': 'bg-danger',
+                'english': 'bg-primary',
+                'programming': 'bg-success',
+                'physics': 'bg-warning',
+                'chemistry': 'bg-info',
+                'other': 'bg-secondary'
+            };
+            return categoryClasses[category] || 'bg-secondary';
+        }
+        
+        // 添加新笔记
+        function addNote() {
+            const title = document.getElementById('noteTitle').value;
+            const category = document.getElementById('noteCategory').value;
+            const tags = document.getElementById('noteTags').value;
+            const content = document.getElementById('noteContent').value;
+            
+            if (!title || !category || !content) {
+                alert('请填写所有必填字段');
+                return;
+            }
+            
+            const tagArray = tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            
+            const newNote = {
+                id: Date.now(),
+                title,
+                category,
+                tags: tagArray,
+                content,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            notes.push(newNote);
+            saveNotes();
+            renderNotes();
+            
+            // 重置表单并关闭模态框
+            noteForm.reset();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addNoteModal'));
+            modal.hide();
+        }
+        
+        // 查看笔记
+        function viewNote(id) {
+            const note = notes.find(note => note.id === id);
+            if (!note) return;
+            
+            currentEditingNoteId = id;
+            
+            document.getElementById('viewNoteTitle').textContent = note.title;
+            document.getElementById('viewNoteCategory').textContent = getCategoryName(note.category);
+            document.getElementById('viewNoteDate').textContent = new Date(note.date).toLocaleDateString();
+            
+            // 显示标签
+            const tagsContainer = document.getElementById('viewNoteTags');
+            tagsContainer.innerHTML = '';
+            note.tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'badge bg-light text-dark me-1';
+                tagElement.textContent = tag;
+                tagsContainer.appendChild(tagElement);
+            });
+            
+            // 显示内容
+            document.getElementById('viewNoteContent').textContent = note.content;
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('viewNoteModal'));
+            modal.show();
+        }
+        
+        // 编辑笔记
+        function editNote(id) {
+            const note = notes.find(note => note.id === id);
+            if (!note) return;
+            
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteCategory').value = note.category;
+            document.getElementById('noteTags').value = note.tags.join(', ');
+            document.getElementById('noteContent').value = note.content;
+            
+            // 更改保存按钮行为
+            saveNoteBtn.textContent = '更新笔记';
+            saveNoteBtn.onclick = function() {
+                updateNote(id);
+            };
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('addNoteModal'));
+            modal.show();
+        }
+        
+        // 更新笔记
+        function updateNote(id) {
+            const noteIndex = notes.findIndex(note => note.id === id);
+            if (noteIndex === -1) return;
+            
+            notes[noteIndex].title = document.getElementById('noteTitle').value;
+            notes[noteIndex].category = document.getElementById('noteCategory').value;
+            notes[noteIndex].tags = document.getElementById('noteTags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            notes[noteIndex].content = document.getElementById('noteContent').value;
+            
+            saveNotes();
+            renderNotes();
+            
+            // 重置表单并关闭模态框
+            noteForm.reset();
+            
+            // 恢复保存按钮的默认行为
+            saveNoteBtn.textContent = '保存笔记';
+            saveNoteBtn.onclick = addNote;
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addNoteModal'));
+            modal.hide();
+        }
+        
+        // 删除笔记
+        function deleteNote(id) {
+            if (confirm('确定要删除这个笔记吗？')) {
+                notes = notes.filter(note => note.id !== id);
+                saveNotes();
+                renderNotes();
+            }
+        }
+        
+        // 保存笔记到本地存储
+        function saveNotes() {
+            localStorage.setItem('learningNotes', JSON.stringify(notes));
+        }
+    </script>
+</body>
+</html>

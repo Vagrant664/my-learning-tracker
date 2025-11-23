@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习进度图表 - 学海航行</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .page-header {
+            background: linear-gradient(rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .filter-controls {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-graduation-cap me-2"></i>学海航行
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tasks.html">学习任务</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="progress.html">进度图表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="notes.html">学习笔记</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reflections.html">学习感悟</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="display-5 fw-bold">学习进度图表</h1>
+            <p class="lead mb-0">可视化你的学习成果，追踪成长轨迹</p>
+        </div>
+    </section>
+
+    <!-- 统计概览 -->
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="stats-number text-primary" id="totalStudyHours">0</div>
+                    <div class="stats-label">总学习时长(小时)</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="stats-number text-success" id="completedSubjects">0</div>
+                    <div class="stats-label">已完成科目</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="stats-number text-warning" id="weeklyGoalProgress">0%</div>
+                    <div class="stats-label">周目标完成度</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="stats-number text-info" id="studyStreak">0</div>
+                    <div class="stats-label">连续学习天数</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 图表区域 -->
+    <section class="container mb-5">
+        <div class="filter-controls">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">学习进度分析</h5>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary active" data-period="week">本周</button>
+                        <button type="button" class="btn btn-outline-primary" data-period="month">本月</button>
+                        <button type="button" class="btn btn-outline-primary" data-period="year">全年</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">学习时间趋势</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="studyTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">科目分布</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="subjectDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">任务完成情况</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="taskCompletionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">学习效率分析</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="efficiencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 学习记录 -->
+    <section class="container mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">近期学习记录</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>学习科目</th>
+                                <th>学习时长</th>
+                                <th>完成内容</th>
+                                <th>效率评分</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studyRecords">
+                            <!-- 学习记录将通过JavaScript动态添加 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecordModal">
+                        <i class="fas fa-plus me-2"></i>添加学习记录
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 添加学习记录模态框 -->
+    <div class="modal fade" id="addRecordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加学习记录</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recordForm">
+                        <div class="mb-3">
+                            <label for="recordDate" class="form-label">学习日期</label>
+                            <input type="date" class="form-control" id="recordDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recordSubject" class="form-label">学习科目</label>
+                            <select class="form-select" id="recordSubject" required>
+                                <option value="">请选择科目</option>
+                                <option value="数学">数学</option>
+                                <option value="英语">英语</option>
+                                <option value="编程">编程</option>
+                                <option value="物理">物理</option>
+                                <option value="化学">化学</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recordDuration" class="form-label">学习时长(小时)</label>
+                            <input type="number" class="form-control" id="recordDuration" min="0.5" max="12" step="0.5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recordContent" class="form-label">学习内容</label>
+                            <textarea class="form-control" id="recordContent" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recordEfficiency" class="form-label">效率评分 (1-10)</label>
+                            <input type="range" class="form-range" id="recordEfficiency" min="1" max="10" value="7">
+                            <div class="d-flex justify-content-between">
+                                <small>1 (低)</small>
+                                <small id="efficiencyValue">7</small>
+                                <small>10 (高)</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveRecordBtn">保存记录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>学海航行</h5>
+                    <p>一个帮助你跟踪学习进度、记录学习点滴的平台。</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="../index.html" class="text-light">首页</a></li>
+                        <li><a href="tasks.html" class="text-light">学习任务</a></li>
+                        <li><a href="progress.html" class="text-light">进度图表</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>其他页面</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="notes.html" class="text-light">学习笔记</a></li>
+                        <li><a href="reflections.html" class="text-light">学习感悟</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 学海航行 - 所有权利保留</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 学习记录数据模型
+        let studyRecords = JSON.parse(localStorage.getItem('studyRecords')) || [];
+        
+        // 图表实例
+        let studyTimeChart, subjectDistributionChart, taskCompletionChart, efficiencyChart;
+        
+        // DOM元素
+        const studyRecordsTable = document.getElementById('studyRecords');
+        const recordForm = document.getElementById('recordForm');
+        const saveRecordBtn = document.getElementById('saveRecordBtn');
+        const efficiencyValue = document.getElementById('efficiencyValue');
+        const recordEfficiency = document.getElementById('recordEfficiency');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期为今天
+            document.getElementById('recordDate').valueAsDate = new Date();
+            
+            // 效率滑块事件
+            recordEfficiency.addEventListener('input', function() {
+                efficiencyValue.textContent = this.value;
+            });
+            
+            // 保存记录事件
+            saveRecordBtn.addEventListener('click', addStudyRecord);
+            
+            // 时间周期筛选事件
+            document.querySelectorAll('[data-period]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const period = this.getAttribute('data-period');
+                    document.querySelectorAll('[data-period]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    updateCharts(period);
+                });
+            });
+            
+            // 初始渲染
+            renderStudyRecords();
+            updateStats();
+            initCharts();
+        });
+        
+        // 初始化图表
+        function initCharts() {
+            // 学习时间趋势图
+            const studyTimeCtx = document.getElementById('studyTimeChart').getContext('2d');
+            studyTimeChart = new Chart(studyTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    datasets: [{
+                        label: '学习时长(小时)',
+                        data: [3, 2.5, 4, 3.5, 2, 5, 4.5],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '小时'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 科目分布图
+            const subjectCtx = document.getElementById('subjectDistributionChart').getContext('2d');
+            subjectDistributionChart = new Chart(subjectCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['数学', '英语', '编程', '物理', '其他'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#9b59b6'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // 任务完成情况图
+            const taskCtx = document.getElementById('taskCompletionChart').getContext('2d');
+            taskCompletionChart = new Chart(taskCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['已完成', '进行中', '未开始'],
+                    datasets: [{
+                        label: '任务数量',
+                        data: [12, 5, 3],
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#3498db',
+                            '#e0e0e0'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // 学习效率分析图
+            const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+            efficiencyChart = new Chart(efficiencyCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['专注度', '理解度', '记忆度', '应用能力', '学习速度'],
+                    datasets: [{
+                        label: '当前周',
+                        data: [7, 8, 6, 7, 8],
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        borderColor: '#3498db',
+                        pointBackgroundColor: '#3498db'
+                    }, {
+                        label: '上周',
+                        data: [6, 7, 5, 6, 7],
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        borderColor: '#2ecc71',
+                        pointBackgroundColor: '#2ecc71'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 10,
+                            ticks: {
+                                stepSize: 2
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 更新图表数据
+        function updateCharts(period) {
+            // 这里可以根据不同的时间周期更新图表数据
+            // 由于是示例，我们只简单更改一些数据
+            
+            if (period === 'week') {
+                studyTimeChart.data.labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                studyTimeChart.data.datasets[0].data = [3, 2.5, 4, 3.5, 2, 5, 4.5];
+            } else if (period === 'month') {
+                studyTimeChart.data.labels = ['第1周', '第2周', '第3周', '第4周'];
+                studyTimeChart.data.datasets[0].data = [15, 18, 20, 22];
+            } else if (period === 'year') {
+                studyTimeChart.data.labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+                studyTimeChart.data.datasets[0].data = [80, 75, 85, 90, 95, 100, 110, 105, 100, 95, 90, 85];
+            }
+            
+            studyTimeChart.update();
+        }
+        
+        // 渲染学习记录
+        function renderStudyRecords() {
+            studyRecordsTable.innerHTML = '';
+            
+            if (studyRecords.length === 0) {
+                studyRecordsTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            <i class="fas fa-clipboard-list fa-2x mb-2 d-block"></i>
+                            暂无学习记录
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // 按日期降序排列
+            const sortedRecords = [...studyRecords].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedRecords.forEach((record, index) => {
+                const row = document.createElement('tr');
+                const date = new Date(record.date).toLocaleDateString();
+                
+                // 效率评分星星
+                let stars = '';
+                for (let i = 1; i <= 10; i++) {
+                    if (i <= record.efficiency) {
+                        stars += '<i class="fas fa-star text-warning"></i>';
+                    } else {
+                        stars += '<i class="far fa-star text-muted"></i>';
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td>${date}</td>
+                    <td>${record.subject}</td>
+                    <td>${record.duration} 小时</td>
+                    <td>${record.content}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">${stars}</div>
+                            <small>${record.efficiency}/10</small>
+                        </div>
+                    </td>
+                `;
+                
+                studyRecordsTable.appendChild(row);
+            });
+        }
+        
+        // 添加学习记录
+        function addStudyRecord() {
+            const date = document.getElementById('recordDate').value;
+            const subject = document.getElementById('recordSubject').value;
+            const duration = parseFloat(document.getElementById('recordDuration').value);
+            const content = document.getElementById('recordContent').value;
+            const efficiency = parseInt(document.getElementById('recordEfficiency').value);
+            
+            if (!date || !subject || !duration || !content) {
+                alert('请填写所有必填字段');
+                return;
+            }
+            
+            const newRecord = {
+                id: Date.now(),
+                date,
+                subject,
+                duration,
+                content,
+                efficiency
+            };
+            
+            studyRecords.push(newRecord);
+            saveStudyRecords();
+            renderStudyRecords();
+            updateStats();
+            
+            // 重置表单并关闭模态框
+            recordForm.reset();
+            document.getElementById('recordDate').valueAsDate = new Date();
+            document.getElementById('recordEfficiency').value = 7;
+            efficiencyValue.textContent = '7';
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addRecordModal'));
+            modal.hide();
+        }
+        
+        // 保存学习记录到本地存储
+        function saveStudyRecords() {
+            localStorage.setItem('studyRecords', JSON.stringify(studyRecords));
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            // 计算总学习时长
+            const totalStudyHours = studyRecords.reduce((total, record) => total + record.duration, 0);
+            document.getElementById('totalStudyHours').textContent = totalStudyHours.toFixed(1);
+            
+            // 计算已完成科目（假设每个科目学习超过10小时算完成）
+            const subjectHours = {};
+            studyRecords.forEach(record => {
+                if (!subjectHours[record.subject]) {
+                    subjectHours[record.subject] = 0;
+                }
+                subjectHours[record.subject] += record.duration;
+            });
+            
+            const completedSubjects = Object.values(subjectHours).filter(hours => hours >= 10).length;
+            document.getElementById('completedSubjects').textContent = completedSubjects;
+            
+            // 计算周目标完成度（假设周目标是20小时）
+            const weeklyGoal = 20;
+            const thisWeekHours = studyRecords
+                .filter(record => {
+                    const recordDate = new Date(record.date);
+                    const today = new Date();
+                    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                    return recordDate >= startOfWeek;
+                })
+                .reduce((total, record) => total + record.duration, 0);
+            
+            const weeklyGoalProgress = Math.min(100, Math.round((thisWeekHours / weeklyGoal) * 100));
+            document.getElementById('weeklyGoalProgress').textContent = weeklyGoalProgress + '%';
+            
+            // 计算连续学习天数
+            const today = new Date();
+            let studyStreak = 0;
+            let currentDate = new Date(today);
+            
+            // 检查今天是否有学习记录
+            const todayStr = today.toISOString().split('T')[0];
+            const hasTodayRecord = studyRecords.some(record => record.date === todayStr);
+            
+            if (hasTodayRecord) {
+                studyStreak = 1;
+                currentDate.setDate(currentDate.getDate() - 1);
+                
+                // 检查连续天数
+                while (true) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    const hasRecord = studyRecords.some(record => record.date === dateStr);
+                    
+                    if (hasRecord) {
+                        studyStreak++;
+                        currentDate.setDate(currentDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            document.getElementById('studyStreak').textContent = studyStreak;
+        }
+    </script>
+</body>
+</html>

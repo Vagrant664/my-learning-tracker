@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学海航行 - 学习进度可视化平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(52, 152, 219, 0.8), rgba(41, 128, 185, 0.9)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .task-item {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .completed-task {
+            border-left-color: var(--secondary-color);
+            opacity: 0.7;
+        }
+        
+        .note-card {
+            background-color: #fff9c4;
+            border-left: 4px solid #ffd600;
+        }
+        
+        .reflection-card {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>学海航行
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="web/tasks.html">学习任务</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="web/progress.html">进度图表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="web/notes.html">学习笔记</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="web/reflections.html">学习感悟</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">掌控你的学习进度</h1>
+            <p class="lead mb-4">可视化学习轨迹，记录成长点滴，让每一次进步都有迹可循</p>
+            <a href="web/tasks.html" class="btn btn-light btn-lg">开始记录</a>
+        </div>
+    </section>
+
+    <!-- 功能介绍 -->
+    <section class="container mb-5">
+        <div class="row text-center mb-5">
+            <div class="col-md-12">
+                <h2 class="mb-3">核心功能</h2>
+                <p class="text-muted">全方位管理你的学习过程</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h5 class="card-title">任务管理</h5>
+                        <p class="card-text">创建、跟踪和完成学习任务，清晰掌握学习进度。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5 class="card-title">进度可视化</h5>
+                        <p class="card-text">通过图表直观展示学习成果，激励持续进步。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <h5 class="card-title">学习笔记</h5>
+                        <p class="card-text">记录重要知识点，构建个人知识体系。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h5 class="card-title">学习感悟</h5>
+                        <p class="card-text">分享学习心得，反思成长过程。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最近进展 -->
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">最近学习进展</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="task-item">
+                            <h6>完成HTML/CSS学习</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success" style="width: 100%"></div>
+                            </div>
+                            <small class="text-muted">已完成 · 2023-10-15</small>
+                        </div>
+                        <div class="task-item">
+                            <h6>JavaScript进阶学习</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" style="width: 75%"></div>
+                            </div>
+                            <small class="text-muted">进行中 · 预计10天后完成</small>
+                        </div>
+                        <div class="task-item">
+                            <h6>数据结构与算法</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" style="width: 40%"></div>
+                            </div>
+                            <small class="text-muted">进行中 · 预计20天后完成</small>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="web/tasks.html" class="btn btn-primary">查看所有任务</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">学习统计</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="chart-container">
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <h4>12</h4>
+                                <p class="text-muted">已完成任务</p>
+                            </div>
+                            <div class="col-6">
+                                <h4>5</h4>
+                                <p class="text-muted">进行中任务</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最新笔记和感悟 -->
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">最新笔记</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="note-card p-3 mb-3">
+                            <h6>CSS Flexbox布局详解</h6>
+                            <p class="mb-1">Flexbox是一种一维布局模型，能够高效地实现元素在容器中的对齐、分布和排序...</p>
+                            <small class="text-muted">2023-10-12</small>
+                        </div>
+                        <div class="note-card p-3">
+                            <h6>JavaScript闭包概念</h6>
+                            <p class="mb-1">闭包是指有权访问另一个函数作用域中变量的函数。创建闭包的常见方式是在一个函数内部创建另一个函数...</p>
+                            <small class="text-muted">2023-10-08</small>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="web/notes.html" class="btn btn-outline-primary">查看所有笔记</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">最新感悟</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="reflection-card p-3 mb-3">
+                            <h6>学习需要系统性</h6>
+                            <p class="mb-1">今天意识到碎片化学习效果有限，需要建立知识体系，将知识点串联起来...</p>
+                            <small class="text-muted">2023-10-10</small>
+                        </div>
+                        <div class="reflection-card p-3">
+                            <h6>坚持的力量</h6>
+                            <p class="mb-1">连续学习30天了，虽然进步缓慢，但回头看看已经走了很远。坚持是学习最重要的品质...</p>
+                            <small class="text-muted">2023-10-05</small>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="web/reflections.html" class="btn btn-outline-primary">查看所有感悟</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>学海航行</h5>
+                    <p>一个帮助你跟踪学习进度、记录学习点滴的平台。</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-light">首页</a></li>
+                        <li><a href="web/tasks.html" class="text-light">学习任务</a></li>
+                        <li><a href="web/progress.html" class="text-light">进度图表</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>其他页面</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="web/notes.html" class="text-light">学习笔记</a></li>
+                        <li><a href="web/reflections.html" class="text-light">学习感悟</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 学海航行 - 所有权利保留</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 首页进度图表
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['已完成', '进行中', '未开始'],
+                    datasets: [{
+                        data: [12, 5, 3],
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#3498db',
+                            '#e0e0e0'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
